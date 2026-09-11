@@ -21,7 +21,7 @@ export function ClueList({ card, status, revealedCount }: ClueListProps) {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              padding: "10px 4px",
+              padding: "6px 4px",
               borderBottom: i < CLUE_LABELS.length - 1 ? `1px solid ${COLORS.border}` : "none",
             }}
           >

@@ -9,6 +9,7 @@ export const MOCK_CARDS: Card[] = [
     manaCost: "{R}",
     firstYear: "1993",
     firstSet: "Limited Edition Alpha",
+    imageUrl: "https://api.scryfall.com/cards/named?exact=Lightning+Bolt&format=image&version=art_crop",
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ export const MOCK_CARDS: Card[] = [
     manaCost: "{G}",
     firstYear: "1994",
     firstSet: "Legends",
+    imageUrl: "https://api.scryfall.com/cards/named?exact=Llanowar+Elves&format=image&version=art_crop",
   },
   {
     id: 3,
@@ -27,6 +29,7 @@ export const MOCK_CARDS: Card[] = [
     manaCost: "{2}{W}{W}",
     firstYear: "1993",
     firstSet: "Limited Edition Alpha",
+    imageUrl: "https://api.scryfall.com/cards/named?exact=Wrath+of+God&format=image&version=art_crop",
   },
   {
     id: 4,
@@ -36,6 +39,7 @@ export const MOCK_CARDS: Card[] = [
     manaCost: "{1}{G}",
     firstYear: "2007",
     firstSet: "Future Sight",
+    imageUrl: "https://api.scryfall.com/cards/named?exact=Tarmogoyf&format=image&version=art_crop",
   },
 ];
 

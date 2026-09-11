@@ -6,6 +6,7 @@ export interface Card {
   manaCost: string;
   firstYear: string;
   firstSet: string;
+  imageUrl: string;
 }
  
 export type GameStatus = "playing" | "won" | "lost";

@@ -10,7 +10,7 @@ export function GuessHistory({ history }: GuessHistoryProps) {
   if (history.length === 0) return null;
 
   return (
-    <div style={{ marginTop: 24, display: "flex", flexWrap: "wrap", gap: 6 }}>
+    <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 6 }}>
       {history.map((guess, i) => (
         <span
           key={`${guess.name}-${i}`}

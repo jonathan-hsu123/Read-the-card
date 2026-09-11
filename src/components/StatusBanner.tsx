@@ -24,12 +24,12 @@ export function StatusBanner({ status, wrongGuesses, onNext }: StatusBannerProps
   const guessCount = wrongGuesses + 1;
 
   return (
-    <div style={{ marginBottom: 28 }}>
+    <div style={{ marginBottom: 14 }}>
       <p
         style={{
           color: isWin ? COLORS.correct : COLORS.incorrect,
           fontSize: 14,
-          marginBottom: 14,
+          marginBottom: 8,
         }}
       >
         {isWin

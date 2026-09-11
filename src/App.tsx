@@ -35,13 +35,13 @@ export default function App() {
         background: COLORS.bg,
         display: "flex",
         justifyContent: "center",
-        padding: "56px 20px",
+        padding: "24px 20px",
         fontFamily: FONT_FAMILY,
       }}
     >
       <div style={{ width: "100%", maxWidth: 420 }}>
-        <div style={{ marginBottom: 36 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 600, color: COLORS.ink, margin: 0 }}>
+        <div style={{ marginBottom: 16 }}>
+          <h1 style={{ fontSize: 32, fontWeight: 600, color: COLORS.ink, margin: 0 }}>
             Name that card
           </h1>
           <p style={{ color: COLORS.secondary, fontSize: 14, marginTop: 4 }}>

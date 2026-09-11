@@ -26,11 +26,11 @@ export function GuessInput({
 }: GuessInputProps) {
   return (
     <>
-      <p style={{ color: COLORS.secondary, fontSize: 13, marginBottom: 10 }}>
+      <p style={{ color: COLORS.secondary, fontSize: 13, marginBottom: 6 }}>
         Guess {wrongGuesses + 1} of {maxGuesses} — {guessesLeft} left
       </p>
 
-      <div style={{ position: "relative", marginBottom: 28 }}>
+      <div style={{ position: "relative", marginBottom: 14 }}>
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
