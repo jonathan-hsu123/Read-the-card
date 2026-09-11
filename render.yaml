@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: readthecard
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build && npm run fetch-cards && cd .. && npm install && npm run build
+    startCommand: node dist/src/index.js

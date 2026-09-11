@@ -1,4 +1,3 @@
-import React from "react";
 import { CLUE_LABELS, getClueValue } from "../data";
 import { COLORS } from "../theme";
 import type { Card, GameStatus } from "../types";

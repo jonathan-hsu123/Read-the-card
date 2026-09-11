@@ -84,3 +84,13 @@ cd server && npm run start    # run the compiled backend (after build)
 ## Re-syncing card data
 
 Re-run `npm run fetch-cards` inside `server/` any time you want to refresh the card pool from Scryfall's latest bulk data — it fully replaces the existing `printings` table.
+
+## Deployment
+
+The app has no user accounts and the SQLite file is just a rebuildable Scryfall snapshot, so there's nothing that needs persistent storage — it deploys as a **single Node service**: the built backend (`server/dist/src/index.js`) serves both the `/api/*` routes and the built frontend as static files (see `server/src/app.ts`), so there's one process and one URL, no CORS to configure.
+
+**[render.yaml](render.yaml)** at the repo root configures this for [Render](https://render.com)'s free tier:
+- Build: installs + builds the backend, runs `fetch-cards` to (re)populate the DB, then installs + builds the frontend.
+- Start: `node dist/src/index.js` from `server/`.
+
+To deploy: connect the repo on Render and it'll pick up `render.yaml` automatically (or paste the same build/start commands into any other Node host — Fly.io, Railway, etc. work the same way). Re-deploying re-runs `fetch-cards`, so the card pool refreshes on every deploy.

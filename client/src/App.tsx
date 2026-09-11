@@ -1,4 +1,3 @@
-import React from "react";
 import { CardFrame } from "./components/CardFrame";
 import { ClueList } from "./components/ClueList";
 import { GuessHistory } from "./components/GuessHistory";
@@ -109,6 +108,16 @@ export default function App() {
             <GuessHistory history={guessHistory} />
           </>
         )}
+
+        <p style={{ color: COLORS.muted, fontSize: 11, marginTop: 32, textAlign: "center" }}>
+          <a
+            href="https://www.flaticon.com/free-icons/cards"
+            title="cards icons"
+            style={{ color: COLORS.muted }}
+          >
+            Icons created by Unknown Depths - Flaticon
+          </a>
+        </p>
       </div>
     </div>
   );

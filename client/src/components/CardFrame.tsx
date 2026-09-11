@@ -1,4 +1,3 @@
-import React from "react";
 import { COLORS } from "../theme";
 import type { Card } from "../types";
 

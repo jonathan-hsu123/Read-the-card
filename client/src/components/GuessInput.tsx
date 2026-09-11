@@ -1,4 +1,3 @@
-import React from "react";
 import { COLORS } from "../theme";
 
 interface GuessInputProps {
