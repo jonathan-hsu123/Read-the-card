@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
-import { ALL_NAMES, MAX_GUESSES, MOCK_CARDS } from "../data";
+import { useEffect, useState } from "react";
+import { MAX_GUESSES } from "../data";
 import type { Card, GameStatus, GuessRecord } from "../types";
 
 export interface TriviaGameState {
-  card: Card;
+  card: Card | null;
   status: GameStatus;
   wrongGuesses: number;
   guessesLeft: number;
@@ -19,25 +19,51 @@ export interface TriviaGameState {
 }
 
 export function useTriviaGame(): TriviaGameState {
-  const [cardIndex, setCardIndex] = useState(0);
+  const [card, setCard] = useState<Card | null>(null);
   const [wrongGuesses, setWrongGuesses] = useState(0);
   const [status, setStatus] = useState<GameStatus>("playing");
   const [inputValue, setInputValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [guessHistory, setGuessHistory] = useState<GuessRecord[]>([]);
+  const [fetchedSuggestions, setFetchedSuggestions] = useState<string[]>([]);
 
-  const card = MOCK_CARDS[cardIndex];
   const revealedCount = Math.min(wrongGuesses, MAX_GUESSES - 1);
   const guessesLeft = MAX_GUESSES - wrongGuesses;
+  const suggestions = inputValue.trim() ? fetchedSuggestions : [];
 
-  const suggestions = useMemo(() => {
-    const query = inputValue.trim().toLowerCase();
-    if (!query) return [];
-    return ALL_NAMES.filter((name) => name.toLowerCase().includes(query)).slice(0, 6);
+  useEffect(() => {
+    loadNextCard();
+  }, []);
+
+  useEffect(() => {
+    const query = inputValue.trim();
+    if (!query) return;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      fetch(`/api/cards/search?q=${encodeURIComponent(query)}`, { signal: controller.signal })
+        .then((res) => res.json())
+        .then((names: string[]) => setFetchedSuggestions(names))
+        .catch((err) => {
+          if (err.name !== "AbortError") console.error(err);
+        });
+    }, 200);
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, [inputValue]);
 
+  function loadNextCard(): void {
+    fetch("/api/cards/random")
+      .then((res) => res.json())
+      .then((data: Card) => setCard(data))
+      .catch(console.error);
+  }
+
   function submitGuess(name: string): void {
-    if (status !== "playing") return;
+    if (status !== "playing" || !card) return;
 
     const correct = name === card.name;
     setGuessHistory((history) => [...history, { name, correct }]);
@@ -57,11 +83,12 @@ export function useTriviaGame(): TriviaGameState {
   }
 
   function nextCard(): void {
-    setCardIndex((index) => (index + 1) % MOCK_CARDS.length);
+    setCard(null);
     setWrongGuesses(0);
     setStatus("playing");
     setInputValue("");
     setGuessHistory([]);
+    loadNextCard();
   }
 
   return {

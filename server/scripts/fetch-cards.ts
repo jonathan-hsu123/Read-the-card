@@ -5,18 +5,45 @@ import { db } from "../src/db.js";
 
 interface ScryfallCard {
   id: string;
-  oracle_id: string;
+  oracle_id?: string;
   name: string;
   lang: string;
   digital: boolean;
   games: string[];
   layout: string;
   rarity: string;
-  type_line: string;
-  mana_cost?: string;
+  type_line?: string;
+  cmc: number;
   released_at: string;
   set_name: string;
+  frame_effects?: string[];
+  legalities: { vintage: string };
   image_uris?: { art_crop?: string };
+  card_faces?: { oracle_id?: string; type_line?: string; image_uris?: { art_crop?: string } }[];
+}
+
+function getImageUrl(card: ScryfallCard): string | undefined {
+  return card.image_uris?.art_crop ?? card.card_faces?.[0]?.image_uris?.art_crop;
+}
+
+function getTypeLine(card: ScryfallCard): string | undefined {
+  return card.type_line ?? card.card_faces?.[0]?.type_line;
+}
+
+function getOracleId(card: ScryfallCard): string | undefined {
+  return card.oracle_id ?? card.card_faces?.[0]?.oracle_id;
+}
+
+const EXCLUDED_FRAME_EFFECTS = new Set([
+  "inverted",
+  "extendedart",
+  "showcase",
+  "fullart",
+  "borderless",
+]);
+
+function hasExcludedFrameEffect(card: ScryfallCard): boolean {
+  return (card.frame_effects ?? []).some((effect) => EXCLUDED_FRAME_EFFECTS.has(effect));
 }
 
 const SCRYFALL_HEADERS = {
@@ -38,8 +65,11 @@ function isUsable(card: ScryfallCard): boolean {
     card.lang === "en" &&
     card.digital === false &&
     card.games.includes("paper") &&
-    card.layout === "normal" &&
-    Boolean(card.image_uris?.art_crop)
+    !hasExcludedFrameEffect(card) &&
+    card.legalities.vintage !== "not_legal" &&
+    Boolean(getImageUrl(card)) &&
+    Boolean(getTypeLine(card)) &&
+    Boolean(getOracleId(card))
   );
 }
 
@@ -89,14 +119,14 @@ async function main() {
       kept += 1;
       insertRaw.run(
         card.id,
-        card.oracle_id,
+        getOracleId(card)!,
         card.name,
         card.rarity,
-        card.type_line,
-        card.mana_cost ?? "",
+        getTypeLine(card)!.split(" — ")[0],
+        String(card.cmc),
         card.released_at,
         card.set_name,
-        card.image_uris?.art_crop ?? "",
+        getImageUrl(card) ?? "",
       );
     }
     if (seen % 20000 === 0) console.log(`  processed ${seen} printings, kept ${kept}`);

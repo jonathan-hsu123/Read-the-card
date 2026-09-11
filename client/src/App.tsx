@@ -28,6 +28,24 @@ export default function App() {
     nextCard,
   } = useTriviaGame();
 
+  if (!card) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: COLORS.bg,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: FONT_FAMILY,
+          color: COLORS.secondary,
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -42,10 +60,10 @@ export default function App() {
       <div style={{ width: "100%", maxWidth: 420 }}>
         <div style={{ marginBottom: 16 }}>
           <h1 style={{ fontSize: 32, fontWeight: 600, color: COLORS.ink, margin: 0 }}>
-            Name that card
+            Read the card, explain the card
           </h1>
           <p style={{ color: COLORS.secondary, fontSize: 14, marginTop: 4 }}>
-            Five guesses. A clue unlocks after each miss.
+            What is this card? You get 5 guesses.
           </p>
         </div>
 
