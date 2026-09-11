@@ -49,7 +49,7 @@ export default function App() {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "flex-start",
+            alignItems: "center",
             gap: 12,
             marginBottom: 16,
           }}

@@ -93,6 +93,15 @@ export function Settings({ settings, onChange }: SettingsProps) {
             Exclude Universes Beyond
           </label>
 
+          <label style={{ ...checkboxRowStyle, marginBottom: bounds ? 14 : 0 }}>
+            <input
+              type="checkbox"
+              checked={settings.excludeSecretLair}
+              onChange={(e) => onChange({ excludeSecretLair: e.target.checked })}
+            />
+            Exclude Secret Lair
+          </label>
+
           <label style={checkboxRowStyle}>
             <input
               type="checkbox"
@@ -109,15 +118,6 @@ export function Settings({ settings, onChange }: SettingsProps) {
               onChange={(e) => onChange({ onlyFirstPrinting: e.target.checked })}
             />
             Only first printing
-          </label>
-
-          <label style={{ ...checkboxRowStyle, marginBottom: bounds ? 14 : 0 }}>
-            <input
-              type="checkbox"
-              checked={settings.excludeSecretLair}
-              onChange={(e) => onChange({ excludeSecretLair: e.target.checked })}
-            />
-            Exclude Secret Lair
           </label>
 
           {bounds && (
