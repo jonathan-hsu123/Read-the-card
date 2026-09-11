@@ -17,7 +17,7 @@ A Magic: The Gathering guessing game.
 ## Project structure
 
 ```
-src/
+client/src/
   App.tsx                  Top-level layout, wires the game hook to the UI
   data.ts                  Card data, clue labels, and game constants (MAX_GUESSES, etc.)
   theme.ts                 Shared color palette and font
@@ -33,7 +33,7 @@ src/
     StatusBanner.tsx       Win/loss banner with "next card" action
 ```
 
-Card data in [`src/data.ts`](src/data.ts) is currently a small hardcoded sample set — swap in a real data source (e.g. the [Scryfall API](https://scryfall.com/docs/api)) to expand beyond the mock cards.
+Card data in [`client/src/data.ts`](client/src/data.ts) is currently a small hardcoded sample set — swap in a real data source (e.g. the [Scryfall API](https://scryfall.com/docs/api)) to expand beyond the mock cards.
 
 ## Getting started
 
