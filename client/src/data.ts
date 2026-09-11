@@ -1,6 +1,6 @@
 import type { Card } from "./types";
 
-export const MAX_GUESSES = 5;
+export const MAX_GUESSES = 6;
 
 export const CLUE_LABELS: string[] = ["Rarity", "Type", "Mana cost", "First printed", "First set"];
 

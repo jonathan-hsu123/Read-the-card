@@ -23,6 +23,7 @@ client/src/                  frontend (Vite root config lives at repo root)
   types.ts                    Card / GameStatus / GuessRecord types
   hooks/
     useTriviaGame.ts          Game state: fetches cards/search from the backend, tracks guesses/status/history
+    useSettings.ts             Answer-pool filter settings, persisted to localStorage
     useLoadFont.ts            Loads the display font
   components/
     CardFrame.tsx             Card art, revealed name on win/loss
@@ -30,13 +31,14 @@ client/src/                  frontend (Vite root config lives at repo root)
     ClueList.tsx               Progressive clue reveal
     GuessHistory.tsx            List of past guesses this round
     StatusBanner.tsx             Win/loss banner with "next card" action
+    Settings.tsx                 Cog-icon button + filter panel (Universes Beyond, booster-only, year range, first-printing-only)
 
 server/                      backend (independent app, its own package.json)
   src/
     db.ts                     SQLite connection + printings table schema
     app.ts                     Express app, mounts routes
     index.ts                   Starts the HTTP server
-    routes/cards.ts             GET /random, GET /search
+    routes/cards.ts             GET /random (accepts filter query params), GET /search, GET /year-range
   scripts/fetch-cards.ts       Imports Scryfall's bulk card data into the DB
   data/cards.sqlite            Generated DB file (gitignored)
 ```

@@ -15,11 +15,27 @@ interface ScryfallCard {
   type_line?: string;
   cmc: number;
   released_at: string;
+  set: string;
   set_name: string;
   frame_effects?: string[];
   legalities: { vintage: string };
   image_uris?: { art_crop?: string };
   card_faces?: { oracle_id?: string; type_line?: string; image_uris?: { art_crop?: string } }[];
+  booster: boolean;
+  promo_types?: string[];
+}
+
+function isUniversesBeyond(card: ScryfallCard): boolean {
+  return (card.promo_types ?? []).includes("universesbeyond");
+}
+
+// Scryfall doesn't have a single "is Secret Lair" flag — these are the actual
+// set codes for Secret Lair products (confirmed against Scryfall's /sets),
+// including ones that aren't literally named "Secret Lair" (e.g. slx).
+const SECRET_LAIR_SET_CODES = new Set(["sld", "slc", "slu", "slp", "slz", "slx", "pssc"]);
+
+function isSecretLair(card: ScryfallCard): boolean {
+  return SECRET_LAIR_SET_CODES.has(card.set);
 }
 
 function getImageUrl(card: ScryfallCard): string | undefined {
@@ -28,6 +44,11 @@ function getImageUrl(card: ScryfallCard): string | undefined {
 
 function getTypeLine(card: ScryfallCard): string | undefined {
   return card.type_line ?? card.card_faces?.[0]?.type_line;
+}
+
+function getName(card: ScryfallCard): string {
+  const parts = card.name.split(" // ");
+  return parts.length > 1 && parts.every((part) => part === parts[0]) ? parts[0] : card.name;
 }
 
 function getOracleId(card: ScryfallCard): string | undefined {
@@ -92,14 +113,18 @@ async function main() {
       mana_cost   TEXT NOT NULL,
       released_at TEXT NOT NULL,
       set_name    TEXT NOT NULL,
-      image_url   TEXT NOT NULL
+      image_url   TEXT NOT NULL,
+      is_universes_beyond INTEGER NOT NULL,
+      is_booster           INTEGER NOT NULL,
+      is_secret_lair        INTEGER NOT NULL
     );
   `);
 
   const insertRaw = db.prepare(`
     INSERT OR IGNORE INTO printings_raw
-      (scryfall_id, oracle_id, name, rarity, type_line, mana_cost, released_at, set_name, image_url)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (scryfall_id, oracle_id, name, rarity, type_line, mana_cost, released_at, set_name, image_url,
+       is_universes_beyond, is_booster, is_secret_lair)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const nodeStream = Readable.fromWeb(res.body as never);
@@ -120,13 +145,16 @@ async function main() {
       insertRaw.run(
         card.id,
         getOracleId(card)!,
-        card.name,
+        getName(card),
         card.rarity,
         getTypeLine(card)!.split(" — ")[0],
         String(card.cmc),
         card.released_at,
         card.set_name,
         getImageUrl(card) ?? "",
+        isUniversesBeyond(card) ? 1 : 0,
+        card.booster ? 1 : 0,
+        isSecretLair(card) ? 1 : 0,
       );
     }
     if (seen % 20000 === 0) console.log(`  processed ${seen} printings, kept ${kept}`);
@@ -140,10 +168,16 @@ async function main() {
   db.exec("DELETE FROM printings;");
   db.exec(`
     INSERT INTO printings
-      (scryfall_id, oracle_id, name, rarity, type_line, mana_cost, image_url, first_year, first_set)
+      (scryfall_id, oracle_id, name, rarity, type_line, mana_cost, image_url, set_name, year,
+       first_year, first_set, first_image_url, is_universes_beyond, is_booster, is_first_printing,
+       is_secret_lair)
     SELECT
       r.scryfall_id, r.oracle_id, r.name, r.rarity, r.type_line, r.mana_cost, r.image_url,
-      substr(f.first_released_at, 1, 4), f.first_set_name
+      r.set_name, substr(r.released_at, 1, 4),
+      substr(f.first_released_at, 1, 4), f.first_set_name, f.first_image_url,
+      r.is_universes_beyond, r.is_booster,
+      CASE WHEN r.scryfall_id = f.first_scryfall_id THEN 1 ELSE 0 END,
+      r.is_secret_lair
     FROM printings_raw r
     JOIN (
       SELECT
@@ -154,7 +188,19 @@ async function main() {
           WHERE p2.oracle_id = p1.oracle_id
           ORDER BY p2.released_at ASC
           LIMIT 1
-        ) AS first_set_name
+        ) AS first_set_name,
+        (
+          SELECT p2.image_url FROM printings_raw p2
+          WHERE p2.oracle_id = p1.oracle_id
+          ORDER BY p2.released_at ASC
+          LIMIT 1
+        ) AS first_image_url,
+        (
+          SELECT p2.scryfall_id FROM printings_raw p2
+          WHERE p2.oracle_id = p1.oracle_id
+          ORDER BY p2.released_at ASC
+          LIMIT 1
+        ) AS first_scryfall_id
       FROM printings_raw p1
       GROUP BY p1.oracle_id
     ) f ON f.oracle_id = r.oracle_id;

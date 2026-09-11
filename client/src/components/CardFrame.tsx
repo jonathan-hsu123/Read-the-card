@@ -1,15 +1,14 @@
 import React from "react";
 import { COLORS } from "../theme";
-import type { Card, GameStatus } from "../types";
+import type { Card } from "../types";
 
 interface CardFrameProps {
   card: Card;
-  status: GameStatus;
+  revealed: boolean;
+  revealColor: string;
 }
 
-export function CardFrame({ card, status }: CardFrameProps) {
-  const revealed = status === "won" || status === "lost";
-
+export function CardFrame({ card, revealed, revealColor }: CardFrameProps) {
   return (
     <div
       style={{
@@ -38,7 +37,7 @@ export function CardFrame({ card, status }: CardFrameProps) {
             bottom: 0,
             fontSize: 16,
             fontWeight: 500,
-            color: status === "won" ? COLORS.correct : COLORS.incorrect,
+            color: revealColor,
             textAlign: "center",
             padding: 12,
             margin: 0,

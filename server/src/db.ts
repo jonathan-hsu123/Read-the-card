@@ -17,9 +17,17 @@ db.exec(`
     rarity        TEXT NOT NULL,
     type_line     TEXT NOT NULL,
     mana_cost     TEXT NOT NULL,
-    image_url     TEXT NOT NULL,
-    first_year    TEXT NOT NULL,
-    first_set     TEXT NOT NULL
+    image_url       TEXT NOT NULL,
+    set_name        TEXT NOT NULL,
+    year            TEXT NOT NULL,
+    first_year      TEXT NOT NULL,
+    first_set       TEXT NOT NULL,
+    first_image_url TEXT NOT NULL,
+    is_universes_beyond INTEGER NOT NULL,
+    is_booster           INTEGER NOT NULL,
+    is_first_printing    INTEGER NOT NULL,
+    is_secret_lair        INTEGER NOT NULL
   );
   CREATE INDEX IF NOT EXISTS idx_printings_name ON printings(name);
+  CREATE INDEX IF NOT EXISTS idx_printings_year ON printings(year);
 `);
