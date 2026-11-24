@@ -2,6 +2,7 @@ import { createInterface } from "node:readline";
 import { Readable } from "node:stream";
 import { createGunzip } from "node:zlib";
 import { db } from "../src/db.js";
+import { fetchSets, findSecretLairSetCodes } from "./sets.js";
 
 interface ScryfallCard {
   id: string;
@@ -27,12 +28,6 @@ interface ScryfallCard {
 
 function isUniversesBeyond(card: ScryfallCard): boolean {
   return (card.promo_types ?? []).includes("universesbeyond");
-}
-
-const SECRET_LAIR_SET_CODES = new Set(["sld", "slc", "slu", "slp", "slz", "slx", "pssc"]);
-
-function isSecretLair(card: ScryfallCard): boolean {
-  return SECRET_LAIR_SET_CODES.has(card.set);
 }
 
 function getImageUrl(card: ScryfallCard): string | undefined {
@@ -92,6 +87,10 @@ function isUsable(card: ScryfallCard): boolean {
 }
 
 async function main() {
+  console.log("Fetching set list...");
+  const secretLairSetCodes = findSecretLairSetCodes(await fetchSets(SCRYFALL_HEADERS));
+  console.log(`Secret Lair sets: ${[...secretLairSetCodes].sort().join(", ")}`);
+
   console.log("Fetching bulk-data listing...");
   const downloadUrl = await getDefaultCardsUrl();
   console.log(`Downloading default_cards from ${downloadUrl}`);
@@ -151,7 +150,7 @@ async function main() {
         getImageUrl(card) ?? "",
         isUniversesBeyond(card) ? 1 : 0,
         card.booster ? 1 : 0,
-        isSecretLair(card) ? 1 : 0,
+        secretLairSetCodes.has(card.set) ? 1 : 0,
       );
     }
     if (seen % 20000 === 0) console.log(`  processed ${seen} printings, kept ${kept}`);

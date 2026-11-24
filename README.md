@@ -32,7 +32,9 @@ server/
     dev.ts
     index.ts
     routes/cards.ts
-  scripts/fetch-cards.ts
+  scripts/
+    fetch-cards.ts
+    sets.ts
   data/cards.sqlite
 ```
 
