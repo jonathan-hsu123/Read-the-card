@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
     "target": "es2023",
     "lib": ["ES2023"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "types": ["node"],
-    "outDir": "dist",
-    "rootDir": ".",
+    "outDir": "dist-server",
+    "rootDir": "server",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "strict": true,
@@ -14,5 +15,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "scripts"]
+  "include": ["server/src", "server/scripts"]
 }

@@ -33,11 +33,12 @@ client/src/                  frontend (Vite root config lives at repo root)
     StatusBanner.tsx             Win/loss banner with "next card" action
     Settings.tsx                 Cog-icon button + filter panel (Universes Beyond, booster-only, year range, first-printing-only)
 
-server/                      backend (independent app, its own package.json)
+server/                      backend
   src/
     db.ts                     SQLite connection + printings table schema
     app.ts                     Express app, mounts routes
-    index.ts                   Starts the HTTP server
+    index.ts                   Production entry: serves the API and the built frontend from dist/
+    dev.ts                     Dev entry: serves the API with Vite as middleware
     routes/cards.ts             GET /random (accepts filter query params), GET /search, GET /year-range
   scripts/fetch-cards.ts       Imports Scryfall's bulk card data into the DB
   data/cards.sqlite            Generated DB file (gitignored)
@@ -45,52 +46,30 @@ server/                      backend (independent app, its own package.json)
 
 ## Getting started
 
-**1. Install dependencies** (frontend and backend are separate apps, each needs its own install):
-
 ```bash
 npm install
-cd server && npm install && cd ..
+npm run fetch-cards   # one-time: downloads Scryfall's bulk data into server/data/cards.sqlite
+npm run dev           # http://localhost:3001
 ```
-
-**2. Build the card database** (one-time; downloads Scryfall's bulk data and populates `server/data/cards.sqlite` — takes a minute or two):
-
-```bash
-cd server && npm run fetch-cards && cd ..
-```
-
-**3. Run both apps**, each in its own terminal:
-
-```bash
-# terminal 1 — backend, http://localhost:3001
-cd server && npm run dev
-
-# terminal 2 — frontend, http://localhost:5173
-npm run dev
-```
-
-Open the frontend URL — Vite proxies its `/api/*` requests to the backend automatically (see `vite.config.ts`).
 
 Other scripts:
 
 ```bash
-npm run build      # type-check and build the frontend for production
-npm run lint        # run Oxlint on the frontend
-npm run preview      # preview the frontend production build locally
-
-cd server && npm run build   # type-check and compile the backend
-cd server && npm run start    # run the compiled backend (after build)
+npm run build   # type-check everything, build the frontend to dist/ and the server to dist-server/
+npm start       # run the production build
+npm run lint    # run Oxlint
 ```
 
 ## Re-syncing card data
 
-Re-run `npm run fetch-cards` inside `server/` any time you want to refresh the card pool from Scryfall's latest bulk data — it fully replaces the existing `printings` table.
+Re-run `npm run fetch-cards` any time you want to refresh the card pool from Scryfall's latest bulk data — it fully replaces the existing `printings` table.
 
 ## Deployment
 
-The app has no user accounts and the SQLite file is just a rebuildable Scryfall snapshot, so there's nothing that needs persistent storage — it deploys as a **single Node service**: the built backend (`server/dist/src/index.js`) serves both the `/api/*` routes and the built frontend as static files (see `server/src/app.ts`), so there's one process and one URL, no CORS to configure.
+The app has no user accounts and the SQLite file is just a rebuildable Scryfall snapshot, so there's nothing that needs persistent storage — it deploys as a **single Node service**: the built backend (`dist-server/src/index.js`) serves both the `/api/*` routes and the built frontend as static files (see `server/src/index.ts`), so there's one process and one URL, no CORS to configure.
 
 **[render.yaml](render.yaml)** at the repo root configures this for [Render](https://render.com)'s free tier:
-- Build: installs + builds the backend, runs `fetch-cards` to (re)populate the DB, then installs + builds the frontend.
-- Start: `node dist/src/index.js` from `server/`.
+- Build: `npm install && npm run build && npm run fetch-cards`.
+- Start: `npm start`.
 
 To deploy: connect the repo on Render and it'll pick up `render.yaml` automatically (or paste the same build/start commands into any other Node host — Fly.io, Railway, etc. work the same way). Re-deploying re-runs `fetch-cards`, so the card pool refreshes on every deploy.
