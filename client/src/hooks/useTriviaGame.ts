@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { MAX_GUESSES } from "../data";
 import type { Settings } from "./useSettings";
 import type { Card, GameStatus, GuessRecord } from "../types";
@@ -24,7 +24,7 @@ export interface TriviaGameState {
 
 const SHUFFLE_REVEAL_MS = 1000;
 
-function buildRandomUrl(settings: Settings): string {
+export function buildRandomUrl(settings: Settings): string {
   const params = new URLSearchParams();
   if (settings.excludeUniversesBeyond) params.set("excludeUniversesBeyond", "true");
   if (settings.excludeNonBooster) params.set("excludeNonBooster", "true");
@@ -51,9 +51,10 @@ export function useTriviaGame(settings: Settings): TriviaGameState {
   const guessesLeft = MAX_GUESSES - wrongGuesses;
   const suggestions = inputValue.trim() ? fetchedSuggestions : [];
 
+  const onFiltersChange = useEffectEvent(() => loadNextCard());
+
   useEffect(() => {
-    loadNextCard();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    onFiltersChange();
   }, [
     settings.excludeUniversesBeyond,
     settings.excludeNonBooster,

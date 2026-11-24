@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "start": "node dist-server/src/index.js",
     "fetch-cards": "tsx server/scripts/fetch-cards.ts",
+    "test": "vitest run",
     "lint": "oxlint"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "oxlint": "^1.81.0",
     "tsx": "^4.19.2",
     "typescript": "~6.0.2",
-    "vite": "^8.3.0"
+    "vite": "^8.3.0",
+    "vitest": "^4.1.12"
   }
 }

@@ -155,10 +155,6 @@ export function Settings({ settings, onChange }: SettingsProps) {
                   value={yearStart}
                   style={{
                     zIndex: 1,
-                    // when both handles land on the same value they'd otherwise sit at
-                    // the exact same pixel, and the higher z-index handle would eat every
-                    // click — nudge them apart visually (not their real values) so both
-                    // stay independently draggable right at the collapse point.
                     transform: yearStart === yearEnd ? "translateX(-5px)" : undefined,
                   }}
                   onChange={(e) => {

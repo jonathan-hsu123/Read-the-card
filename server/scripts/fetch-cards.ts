@@ -29,9 +29,6 @@ function isUniversesBeyond(card: ScryfallCard): boolean {
   return (card.promo_types ?? []).includes("universesbeyond");
 }
 
-// Scryfall doesn't have a single "is Secret Lair" flag — these are the actual
-// set codes for Secret Lair products (confirmed against Scryfall's /sets),
-// including ones that aren't literally named "Secret Lair" (e.g. slx).
 const SECRET_LAIR_SET_CODES = new Set(["sld", "slc", "slu", "slp", "slz", "slx", "pssc"]);
 
 function isSecretLair(card: ScryfallCard): boolean {

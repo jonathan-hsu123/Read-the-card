@@ -41,9 +41,7 @@ export function useSettings(): UseSettings {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    } catch {
-      // ignore — settings just won't persist across reloads
-    }
+    } catch {}
   }, [settings]);
 
   function updateSettings(patch: Partial<Settings>): void {
